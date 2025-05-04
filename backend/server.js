@@ -1,0 +1,50 @@
+// backend/server.js
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { summarizeText } from './huggingFace.js'; // ✅ CHANGED: use Hugging Face summarizer
+
+dotenv.config();
+
+const app = express();
+const port = 3012;
+
+// For ES modules to get __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.use(cors());
+app.use(express.json());
+
+// Serve static files from frontend/
+app.use(express.static(path.join(__dirname, '..', 'frontend')));
+
+// Serve the frontend/index.html on root
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
+});
+
+// ========================= HUGGING FACE API =========================
+
+app.post('/summarize', async (req, res) => {
+  try {
+    const { text } = req.body;
+    if (!text) {
+      return res.status(400).json({ error: 'Input text is required.' });
+    }
+
+    const summary = await summarizeText(text);
+    console.log(summary);
+    res.json({ summary });
+  } catch (err) {
+    console.error('Summarization Error:', err.message);
+    res.status(500).json({ error: 'Failed to summarize text.' });
+  }
+});
+
+// ========================= Server Listen =========================
+app.listen(port, () => {
+  console.log(`🚀 Server running at http://localhost:${port}`);
+});
