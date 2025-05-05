@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Image Generator Agent</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="script.js" defer></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <style>
+    @keyframes fadeInUp {
+      from { transform: translate3d(0, 40px, 0); opacity: 0; }
+      to { transform: translate3d(0, 0, 0); opacity: 1; }
+    }
+    .fade-in-up { animation: fadeInUp 1s ease-out both; }
+    .fade-delay-1 { animation-delay: 0.3s; }
+    .fade-delay-2 { animation-delay: 0.6s; }
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; }
+    .star { filter: blur(0.6px); }
+  </style>
+</head>
+
+<body class="bg-gradient-to-b from-[#ffe0ac] via-[#ffd1dc] to-[#c1c8e4] relative min-h-screen font-sans">
+
+<!-- Background Stars -->
+<div class="absolute inset-0 -z-10">
+  <div class="w-full h-full relative animate__animated animate__fadeIn">
+    <span class="absolute star rounded-full bg-white opacity-50" style="width:4px; height:4px; top:7%; left:12%;"></span>
+    <span class="absolute star rounded-full bg-white opacity-40" style="width:3px; height:3px; top:18%; left:78%;"></span>
+    <span class="absolute star rounded-full bg-white opacity-60" style="width:2px; height:2px; top:25%; left:33%;"></span>
+    <span class="absolute star rounded-full bg-white opacity-50" style="width:3px; height:3px; top:40%; left:55%;"></span>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="relative z-10 flex flex-col md:flex-row items-stretch justify-center gap-8 p-6 md:p-12 h-screen overflow-hidden">
+
+  <!-- Left Panel -->
+  <div class="text-black md:w-1/2 fade-in-up fade-delay-1 flex flex-col justify-center">
+    <h1 class="text-5xl font-extrabold mb-6">Image Generator</h1>
+    <h2 class="text-2xl font-light mb-8">Powered by Stable Diffusion XL</h2>
+
+    <input id="promptInput" type="text" placeholder="Describe your image prompt..." 
+      class="w-full px-4 py-3 rounded-xl bg-white/50 backdrop-blur-md text-black placeholder-black/50 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"/>
+
+    <button onclick="generateImage()" 
+      class="mt-6 w-full py-3 rounded-full bg-[#6c5b7b] hover:bg-[#5c4a6b] text-white font-bold transition">
+      Generate Image
+    </button>
+  </div>
+
+  <!-- Right Panel -->
+  <div class="md:w-1/2 fade-in-up fade-delay-2">
+    <div class="bg-white/40 backdrop-blur-lg p-8 md:p-12 rounded-3xl shadow-2xl w-full h-full overflow-y-auto max-h-[80vh]">
+      <h2 class="text-4xl text-center font-bold text-black mb-8">Image Output</h2>
+      <div id="imageOutput" class="flex justify-center items-center text-black text-base space-y-8"></div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

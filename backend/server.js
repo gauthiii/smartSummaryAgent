@@ -5,6 +5,8 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { summarizeText } from './huggingFace.js'; // ✅ CHANGED: use Hugging Face summarizer
+import { generateImage } from './imageClient.js';
+
 
 dotenv.config();
 
@@ -41,6 +43,22 @@ app.post('/summarize', async (req, res) => {
   } catch (err) {
     console.error('Summarization Error:', err.message);
     res.status(500).json({ error: 'Failed to summarize text.' });
+  }
+});
+
+
+app.post('/generate-image', async (req, res) => {
+  try {
+    const { prompt } = req.body;
+    if (!prompt) {
+      return res.status(400).json({ error: 'Prompt is required.' });
+    }
+
+    const imageBase64 = await generateImage(prompt);
+    res.json({ image: imageBase64 });
+  } catch (err) {
+    console.error('Image API Error:', err.message);
+    res.status(500).json({ error: 'Image generation failed.' });
   }
 });
 
