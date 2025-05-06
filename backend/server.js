@@ -5,7 +5,8 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { summarizeText } from './huggingFace.js'; // ✅ CHANGED: use Hugging Face summarizer
-import { generateImage } from './imageClient.js';
+import { generateImageAndSave } from './imageClient.js';
+import { generateGhibliImage } from './ghibliAgent.js';
 
 
 dotenv.config();
@@ -19,6 +20,9 @@ const __dirname = path.dirname(__filename);
 
 app.use(cors());
 app.use(express.json());
+
+// ✅ Add this after middleware setup but before routes
+app.use('/sdxl_images', express.static(path.join(__dirname, '..', 'frontend', 'sdxl_images')));
 
 // Serve static files from frontend/
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
@@ -50,15 +54,45 @@ app.post('/summarize', async (req, res) => {
 app.post('/generate-image', async (req, res) => {
   try {
     const { prompt } = req.body;
+
+    if (!prompt) {
+      return res.status(400).json({ success: false, error: 'Prompt is required.' });
+    }
+
+    const result = await generateImageAndSave(prompt);
+
+
+    console.log(result);
+
+    if (result.success) {
+      res.json({
+        success: true,
+        path: result.path
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        error: result.error || 'Failed to generate image.'
+      });
+    }
+  } catch (err) {
+    console.error('Image API Error:', err.message);
+    res.status(500).json({ success: false, error: 'Image generation failed.' });
+  }
+});
+
+app.post('/generate-ghibli', async (req, res) => {
+  try {
+    const { prompt } = req.body;
     if (!prompt) {
       return res.status(400).json({ error: 'Prompt is required.' });
     }
 
-    const imageBase64 = await generateImage(prompt);
+    const imageBase64 = await generateGhibliImage(prompt);
     res.json({ image: imageBase64 });
   } catch (err) {
-    console.error('Image API Error:', err.message);
-    res.status(500).json({ error: 'Image generation failed.' });
+    console.error('Ghibli API Error:', err.message);
+    res.status(500).json({ error: 'Ghibli image generation failed.' });
   }
 });
 

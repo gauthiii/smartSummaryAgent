@@ -72,10 +72,52 @@ async function summarizeText() {
       });
   
       const data = await res.json();
+      console.log(data);
+  
+      if (data.success && data.path) {
+        imageOutput.innerHTML = `
+          <img src="${data.path}" alt="Generated Image" class="rounded-xl shadow-lg max-w-full max-h-[60vh]"/>
+        `;
+      } else {
+        imageOutput.innerHTML = `<p class="text-red-600 text-center">❌ ${data.error || 'No image returned.'}</p>`;
+      }
+    } catch (error) {
+      console.error(error);
+      imageOutput.innerHTML = `<p class="text-red-600 text-center">Failed to generate image. Try again later.</p>`;
+    }
+  }
+  
+
+
+
+
+  async function generateGhibli() {
+    const prompt = document.getElementById('promptInput1').value.trim();
+    const imageOutput = document.getElementById('imageOutput1');
+  
+    if (!prompt) {
+      alert('Please enter a prompt to generate a Ghibli-style image.');
+      return;
+    }
+  
+    imageOutput.innerHTML = `
+      <div class="flex justify-center items-center h-48">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
+      </div>
+    `;
+  
+    try {
+      const res = await fetch('/generate-ghibli', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt })
+      });
+  
+      const data = await res.json();
   
       if (data.image) {
         imageOutput.innerHTML = `
-          <img src="${data.image}" alt="Generated Image" class="rounded-xl shadow-lg max-w-full max-h-[60vh]"/>
+          <img src="${data.image}" alt="Ghibli Art" class="rounded-xl shadow-lg max-w-full max-h-[60vh]"/>
         `;
       } else {
         imageOutput.innerHTML = `<p class="text-red-600 text-center">No image returned. Try again.</p>`;
