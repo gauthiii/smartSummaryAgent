@@ -12,7 +12,10 @@
         window.location.href = 'index2.html';
       }
       else if (tool === 'image1') {
-        // window.location.href = 'index3.html';
+        window.location.href = 'index3.html';
+      }
+      else if (tool === 'lang') {
+        window.location.href = 'index4.html';
       }
     }
   </script>
@@ -42,6 +45,13 @@
         <div onclick="selectTool('image1')" class="cursor-pointer transform transition hover:scale-105 hover:shadow-xl rounded-2xl p-6 bg-white/40 backdrop-blur-md w-60">
           <img src="assets/3.png" class="w-32 h-32 object-contain mx-auto mb-4" alt="Image Generator" />
           <p class="text-lg font-medium text-black">Ghibli Styled Images</p>
+        </div>
+
+
+         <!-- Languager Box -->
+         <div onclick="selectTool('lang')" class="cursor-pointer transform transition hover:scale-105 hover:shadow-xl rounded-2xl p-6 bg-white/40 backdrop-blur-md w-60">
+          <img src="assets/4.png" class="w-32 h-32 object-contain mx-auto mb-4" alt="Image Generator" />
+          <p class="text-lg font-medium text-black">Translate texts</p>
         </div>
 
 

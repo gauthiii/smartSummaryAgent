@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 import { summarizeText } from './huggingFace.js'; // ✅ CHANGED: use Hugging Face summarizer
 import { generateImageAndSave } from './imageClient.js';
 import { generateGhibliImage } from './ghibliAgent.js';
+import { translateTextToLanguages } from './translator.js';
 
 
 dotenv.config();
@@ -93,6 +94,26 @@ app.post('/generate-ghibli', async (req, res) => {
   } catch (err) {
     console.error('Ghibli API Error:', err.message);
     res.status(500).json({ error: 'Ghibli image generation failed.' });
+  }
+});
+
+
+app.post('/translate', async (req, res) => {
+
+  console.log("Calling translator API");
+  
+  const { text } = req.body;
+
+  if (!text) {
+    return res.status(400).json({ error: 'Text is required for translation.' });
+  }
+
+  try {
+    const translations = await translateTextToLanguages(text);
+    res.json({ translations });
+  } catch (error) {
+    console.error('Translation error:', error);
+    res.status(500).json({ error: 'Translation failed.' });
   }
 });
 

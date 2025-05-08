@@ -128,3 +128,45 @@ async function summarizeText() {
     }
   }
   
+
+  async function translateText() {
+    const inputText = document.getElementById('inputText').value.trim();
+    const translationsDiv = document.getElementById('translations');
+  
+    if (!inputText) {
+      alert('Please enter text to translate.');
+      return;
+    }
+  
+    translationsDiv.innerHTML = `
+      <div class="flex justify-center items-center h-48">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
+      </div>
+    `;
+  
+    try {
+      const response = await fetch('/translate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: inputText }),
+      });
+  
+      const data = await response.json();
+  
+      if (data.translations) {
+        translationsDiv.innerHTML = '';
+        for (const [language, translation] of Object.entries(data.translations)) {
+          const card = document.createElement('div');
+          card.className = 'bg-white/70 rounded-xl p-4 shadow text-black';
+          card.innerHTML = `<h4 class="text-xl font-bold">${language}</h4><p>${translation}</p>`;
+          translationsDiv.appendChild(card);
+        }
+      } else {
+        translationsDiv.innerHTML = '<p class="text-red-600 text-center">Translation failed.</p>';
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      translationsDiv.innerHTML = '<p class="text-red-600 text-center">An error occurred during translation.</p>';
+    }
+  }
+  
